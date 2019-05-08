@@ -38,6 +38,7 @@ import liquibase.structure.core.*;
 import liquibase.util.ISODateFormat;
 import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
+import liquibase.statement.ZonedDateTimeFunction;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -69,6 +70,9 @@ public abstract class AbstractJdbcDatabase implements Database {
      */
     protected String sequenceNextValueFunction;
     protected String sequenceCurrentValueFunction;
+    //protected String currentDWDateTimeFunction;
+    protected ZonedDateTimeFunction zonedDateTimeFunctionObj = new ZonedDateTimeFunction();
+
 
     // List of Database native functions.
     protected List<DatabaseFunction> dateFunctions = new ArrayList<>();
@@ -1445,6 +1449,8 @@ public abstract class AbstractJdbcDatabase implements Database {
         if (function != null) {
             this.currentDateTimeFunction = function;
             this.dateFunctions.add(new DatabaseFunction(function));
+        } else {
+            this.currentDateTimeFunction = zonedDateTimeFunctionObj.getDateTime(function);
         }
     }
 
