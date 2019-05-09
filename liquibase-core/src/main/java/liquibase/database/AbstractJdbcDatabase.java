@@ -31,6 +31,7 @@ import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SequenceCurrentValueFunction;
 import liquibase.statement.SequenceNextValueFunction;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.CurrentTimeFunction;
 import liquibase.statement.core.GetViewDefinitionStatement;
 import liquibase.statement.core.RawCallStatement;
 import liquibase.structure.DatabaseObject;
@@ -71,7 +72,7 @@ public abstract class AbstractJdbcDatabase implements Database {
     protected String sequenceNextValueFunction;
     protected String sequenceCurrentValueFunction;
     //protected String currentDWDateTimeFunction;
-    protected ZonedDateTimeFunction zonedDateTimeFunctionObj = null;//new ZonedDateTimeFunction();
+    protected CurrentTimeFunction currentTimeFunction;
 
 
     // List of Database native functions.
@@ -1441,10 +1442,10 @@ public abstract class AbstractJdbcDatabase implements Database {
 
     @Override
     public String getCurrentDateTimeFunction() {
-        if(zonedDateTimeFunctionObj == null){
-            currentDateTimeFunction =  new ZonedDateTimeFunction().getDateTime(currentDateTimeFunction);
+        if(currentTimeFunction == null){
+            return currentDateTimeFunction;
         }
-        return currentDateTimeFunction ;
+        return currentTimeFunction.getTime();
     }
 
     @Override
