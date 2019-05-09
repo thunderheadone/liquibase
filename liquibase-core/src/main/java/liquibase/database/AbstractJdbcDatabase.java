@@ -71,7 +71,7 @@ public abstract class AbstractJdbcDatabase implements Database {
     protected String sequenceNextValueFunction;
     protected String sequenceCurrentValueFunction;
     //protected String currentDWDateTimeFunction;
-    protected ZonedDateTimeFunction zonedDateTimeFunctionObj = new ZonedDateTimeFunction();
+    protected ZonedDateTimeFunction zonedDateTimeFunctionObj = null;//new ZonedDateTimeFunction();
 
 
     // List of Database native functions.
@@ -1441,7 +1441,10 @@ public abstract class AbstractJdbcDatabase implements Database {
 
     @Override
     public String getCurrentDateTimeFunction() {
-        return currentDateTimeFunction;
+        if(zonedDateTimeFunctionObj == null){
+            currentDateTimeFunction =  new ZonedDateTimeFunction().getDateTime(currentDateTimeFunction);
+        }
+        return currentDateTimeFunction ;
     }
 
     @Override
@@ -1449,8 +1452,6 @@ public abstract class AbstractJdbcDatabase implements Database {
         if (function != null) {
             this.currentDateTimeFunction = function;
             this.dateFunctions.add(new DatabaseFunction(function));
-        } else {
-            this.currentDateTimeFunction = zonedDateTimeFunctionObj.getDateTime(function);
         }
     }
 
