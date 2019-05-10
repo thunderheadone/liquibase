@@ -1441,10 +1441,9 @@ public abstract class AbstractJdbcDatabase implements Database {
 
     @Override
     public String getCurrentDateTimeFunction() {
-        if(currentTimeFunction == null){
-            return currentDateTimeFunction;
-        }
-        return currentTimeFunction.getTime();
+        return Optional.ofNullable(currentTimeFunction)
+                .map(CurrentTimeFunction::getTime)
+                .orElse(currentDateTimeFunction);
     }
 
     @Override
