@@ -39,7 +39,6 @@ import liquibase.structure.core.*;
 import liquibase.util.ISODateFormat;
 import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
-import liquibase.statement.ZonedDateTimeFunction;
 
 import java.io.IOException;
 import java.io.Writer;
