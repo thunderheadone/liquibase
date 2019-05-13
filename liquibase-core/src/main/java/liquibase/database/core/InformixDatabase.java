@@ -33,7 +33,7 @@ public class InformixDatabase extends AbstractJdbcDatabase {
     		Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
 	public InformixDatabase() {
-        super.setCurrentDateTimeFunction("CURRENT " + DATETIME_FIELD_QUALIFIER);
+        super.setCurrentDateTimePlaceholder("CURRENT " + DATETIME_FIELD_QUALIFIER);
         super.sequenceNextValueFunction = "%s.NEXTVAL";
         systemTablesAndViews.add("systables");
 		systemTablesAndViews.add("syscolumns");

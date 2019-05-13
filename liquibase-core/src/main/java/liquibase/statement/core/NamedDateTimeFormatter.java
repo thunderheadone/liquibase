@@ -1,15 +1,12 @@
 package liquibase.statement.core;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public enum NamedDateTimeFormatter implements CurrentTimeFunction {
+public enum NamedDateTimeFormatter implements CurrentDateTimeFunction {
 
 	 BASIC_ISO_DATE("BASIC_ISO_DATE", DateTimeFormatter.BASIC_ISO_DATE)
 	, ISO_LOCAL_DATE("ISO_LOCAL_DATE", DateTimeFormatter.ISO_LOCAL_DATE)
@@ -39,11 +36,11 @@ public enum NamedDateTimeFormatter implements CurrentTimeFunction {
 		this.formatter = formatter;
 	}
 
-	static CurrentTimeFunction byNameOrPattern(String nameOrPattern) {
+	public static CurrentDateTimeFunction byNameOrPattern(String nameOrPattern) {
 		return Stream.of(NamedDateTimeFormatter.values())
 				.filter(ndtf -> Objects.equals(ndtf.getName(), nameOrPattern))
 				.findFirst()
-				.map(CurrentTimeFunction.class::cast)
+				.map(CurrentDateTimeFunction.class::cast)
 				.orElse(() -> DateTimeFormatter.ofPattern(nameOrPattern).format(ZonedDateTime.now()));
 	}
 
@@ -57,7 +54,7 @@ public enum NamedDateTimeFormatter implements CurrentTimeFunction {
 
 	@Override
 	public String getTime() {
-		return formatter.format(ZonedDateTime.now());
+		return "'" + formatter.format(ZonedDateTime.now()) + "'";
 	}
 
 

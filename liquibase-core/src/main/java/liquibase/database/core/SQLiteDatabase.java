@@ -34,7 +34,7 @@ public class SQLiteDatabase extends AbstractJdbcDatabase {
     }
 
     public SQLiteDatabase() {
-        super.setCurrentDateTimeFunction("CURRENT_TIMESTAMP");
+        super.setCurrentDateTimePlaceholder("CURRENT_TIMESTAMP");
     }
 
     public static List<SqlStatement> getAlterTableStatements(
@@ -134,7 +134,7 @@ public class SQLiteDatabase extends AbstractJdbcDatabase {
      * @param catalogName
      * @param schemaName
      * @param tableName
-     * @return
+     * @return Generated SQL statement(s)
      */
     public static Sql[] getAlterTableSqls(Database database, SQLiteDatabase.AlterTableVisitor alterTableVisitor,
                                           String catalogName, String schemaName, String tableName) {

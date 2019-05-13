@@ -11,10 +11,7 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.logging.LogService;
 import liquibase.logging.LogType;
-import liquibase.statement.SqlStatement;
 import liquibase.statement.core.GetViewDefinitionStatement;
-import liquibase.statement.core.RawSqlStatement;
-import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Table;
 import liquibase.structure.core.View;
 
@@ -31,7 +28,7 @@ public class SybaseDatabase extends AbstractJdbcDatabase {
     protected Set<String> systemTablesAndViews = new HashSet<>();
 
     public SybaseDatabase() {
-        super.setCurrentDateTimeFunction("GETDATE()");
+        super.setCurrentDateTimePlaceholder("GETDATE()");
         systemTablesAndViews.add("syscolumns");
         systemTablesAndViews.add("syscomments");
         systemTablesAndViews.add("sysdepends");

@@ -35,14 +35,7 @@ import liquibase.structure.core.Schema;
 import liquibase.util.JdbcUtils;
 import liquibase.util.StringUtils;
 
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.util.ResourceBundle.getBundle;
 
@@ -70,7 +63,7 @@ public class OracleDatabase extends AbstractJdbcDatabase {
     public OracleDatabase() {
         super.unquotedObjectsAreUppercased=true;
         //noinspection HardCodedStringLiteral
-        super.setCurrentDateTimeFunction("SYSTIMESTAMP");
+        super.setCurrentDateTimePlaceholder("SYSTIMESTAMP");
         // Setting list of Oracle's native functions
         //noinspection HardCodedStringLiteral
         dateFunctions.add(new DatabaseFunction("SYSDATE"));

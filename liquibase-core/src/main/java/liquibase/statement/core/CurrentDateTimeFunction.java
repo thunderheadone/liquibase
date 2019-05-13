@@ -1,6 +1,6 @@
 package liquibase.statement.core;
 
 @FunctionalInterface
-public interface CurrentTimeFunction {
+public interface CurrentDateTimeFunction {
 	String getTime();
 }

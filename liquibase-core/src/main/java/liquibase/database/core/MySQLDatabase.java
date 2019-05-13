@@ -34,7 +34,7 @@ public class MySQLDatabase extends AbstractJdbcDatabase {
     private Boolean hasJdbcConstraintDeferrableBug;
 
     public MySQLDatabase() {
-        super.setCurrentDateTimeFunction("NOW()");
+        super.setCurrentDateTimePlaceholder("NOW()");
         setHasJdbcConstraintDeferrableBug(null);
     }
 

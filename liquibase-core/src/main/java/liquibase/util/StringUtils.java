@@ -621,7 +621,7 @@ public class StringUtils {
     /**
      * Strips the comments and whitespaces from the end of given sql string.
      * @param sqlString
-     * @return
+     * @return String with stripped comments/whitspaces
      */
     public static String stripSqlCommentsAndWhitespacesFromTheEnd(String sqlString) {
         if (isEmpty(sqlString)) {

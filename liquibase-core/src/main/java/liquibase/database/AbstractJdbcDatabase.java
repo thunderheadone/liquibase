@@ -31,7 +31,7 @@ import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SequenceCurrentValueFunction;
 import liquibase.statement.SequenceNextValueFunction;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.CurrentTimeFunction;
+import liquibase.statement.core.CurrentDateTimeFunction;
 import liquibase.statement.core.GetViewDefinitionStatement;
 import liquibase.statement.core.RawCallStatement;
 import liquibase.structure.DatabaseObject;
@@ -47,6 +47,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 
@@ -64,14 +65,14 @@ public abstract class AbstractJdbcDatabase implements Database {
     private final Set<String> reservedWords = new HashSet<>();
     protected String defaultCatalogName;
     protected String defaultSchemaName;
-    protected String currentDateTimeFunction;
+    protected String currentDateTimePlaceholder;
     /**
      * The sequence name will be substituted into the string e.g. NEXTVAL('%s')
      */
     protected String sequenceNextValueFunction;
     protected String sequenceCurrentValueFunction;
-    //protected String currentDWDateTimeFunction;
-    protected CurrentTimeFunction currentTimeFunction;
+
+    protected CurrentDateTimeFunction currentDateTimeFunction;
 
 
     // List of Database native functions.
@@ -1387,7 +1388,7 @@ public abstract class AbstractJdbcDatabase implements Database {
             return null;
         }
         if (isCurrentTimeFunction(databaseFunction.getValue().toLowerCase())) {
-            return getCurrentDateTimeFunction();
+            return getCurrentDateTimePlaceholder();
         } else if (databaseFunction instanceof SequenceNextValueFunction) {
             if (sequenceNextValueFunction == null) {
                 throw new RuntimeException(String.format("next value function for a sequence is not configured for database %s",
@@ -1436,20 +1437,31 @@ public abstract class AbstractJdbcDatabase implements Database {
 
         return functionValue.startsWith("current_timestamp")
                 || functionValue.startsWith("current_datetime")
-                || functionValue.equalsIgnoreCase(getCurrentDateTimeFunction());
+                || functionValue.equalsIgnoreCase(getCurrentDateTimePlaceholder());
     }
 
     @Override
-    public String getCurrentDateTimeFunction() {
-        return Optional.ofNullable(currentTimeFunction)
-                .map(CurrentTimeFunction::getTime)
-                .orElse(currentDateTimeFunction);
+    public CurrentDateTimeFunction getCurrentDateTimeFunction() {
+        return currentDateTimeFunction;
     }
 
     @Override
-    public void setCurrentDateTimeFunction(final String function) {
+    public void setCurrentDateTimeFunction(CurrentDateTimeFunction dateTimeFunction) {
+        this.currentDateTimeFunction = dateTimeFunction;
+    }
+
+
+    @Override
+    public String getCurrentDateTimePlaceholder() {
+        return Optional.ofNullable(currentDateTimeFunction)
+                .map(CurrentDateTimeFunction::getTime)
+                .orElse(currentDateTimePlaceholder);
+    }
+
+    @Override
+    public void setCurrentDateTimePlaceholder(final String function) {
         if (function != null) {
-            this.currentDateTimeFunction = function;
+            this.currentDateTimePlaceholder = function;
             this.dateFunctions.add(new DatabaseFunction(function));
         }
     }

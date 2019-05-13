@@ -433,7 +433,7 @@ public class SpringLiquibase implements InitializingBean, BeanNameAware, Resourc
 	/**
 	 * Gets the Spring-name of this instance.
 	 *
-	 * @return
+	 * @return beanName
 	 */
 	public String getBeanName() {
 		return beanName;

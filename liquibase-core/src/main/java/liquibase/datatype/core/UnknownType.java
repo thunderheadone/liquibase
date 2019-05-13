@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * Container for a data type that is not covered by any implementation in {@link liquibase.datatype.core}. Most often,
+ * Container for a data type that is not covered by any implementation in {@link liquibase.datatype.LiquibaseDataType}. Most often,
  * this class is used when a DBMS-specific data type is given of which Liquibase does not know anything about yet.
  */
 public class UnknownType extends LiquibaseDataType {

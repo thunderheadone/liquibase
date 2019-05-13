@@ -1,5 +1,41 @@
 package liquibase.integration.commandline;
 
+import static java.util.ResourceBundle.getBundle;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.Console;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.IllegalFormatException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.slf4j.LoggerFactory;
+
 import liquibase.CatalogAndSchema;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -17,11 +53,15 @@ import liquibase.diff.compare.CompareControl;
 import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.ObjectChangeFilter;
 import liquibase.diff.output.StandardObjectChangeFilter;
-import liquibase.exception.*;
+import liquibase.exception.CommandLineParsingException;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.exception.ValidationFailedException;
 import liquibase.lockservice.LockService;
 import liquibase.lockservice.LockServiceFactory;
-import liquibase.logging.LogService;
 import liquibase.logging.LogLevel;
+import liquibase.logging.LogService;
 import liquibase.logging.LogType;
 import liquibase.logging.Logger;
 import liquibase.logging.core.DefaultLoggerConfiguration;
@@ -36,22 +76,6 @@ import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
 import liquibase.util.xml.XMLResourceBundle;
 import liquibase.util.xml.XmlResourceBundleControl;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import static java.util.ResourceBundle.getBundle;
 
 /**
  * Class for executing Liquibase via the command line.
@@ -101,6 +125,7 @@ public class Main {
     protected String referencePassword;
     protected String referenceDefaultCatalogName;
     protected String referenceDefaultSchemaName;
+    protected String currentDateTimePlaceholder;
     protected String currentDateTimeFunction;
     protected String command;
     protected Set<String> commandParams = new LinkedHashSet<>();
@@ -565,6 +590,7 @@ public class Main {
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_CATALOG)
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_TABLESPACE)
                         && !cmdParm.startsWith("--" + OPTIONS.SCHEMAS)
+                        && !cmdParm.startsWith("--" + OPTIONS.CURRENT_DATE_TIME_FUNCTION)
                         && !cmdParm.startsWith("--" + OPTIONS.OUTPUT_SCHEMAS_AS)
                         && !cmdParm.startsWith("--" + OPTIONS.REFERENCE_SCHEMAS)
                         && !cmdParm.startsWith("--" + OPTIONS.REFERENCE_URL)
@@ -957,6 +983,7 @@ public class Main {
         Database database = CommandLineUtils.createDatabaseObject(fileOpener, this.url,
             this.username, this.password, this.driver, this.defaultCatalogName, this.defaultSchemaName,
             Boolean.parseBoolean(outputDefaultCatalog), Boolean.parseBoolean(outputDefaultSchema),
+            this.currentDateTimeFunction,
             this.databaseClass, this.driverPropertiesFile, this.propertyProviderClass,
             this.liquibaseCatalogName, this.liquibaseSchemaName, this.databaseChangeLogTableName,
             this.databaseChangeLogLockTableName);
@@ -1095,7 +1122,7 @@ public class Main {
                 changeExecListenerClass, changeExecListenerPropertiesFile);
             liquibase.setChangeExecListener(listener);
 
-            database.setCurrentDateTimeFunction(currentDateTimeFunction);
+            database.setCurrentDateTimePlaceholder(currentDateTimePlaceholder);
             for (Map.Entry<String, Object> entry : changeLogParameters.entrySet()) {
                 liquibase.setChangeLogParameter(entry.getKey(), entry.getValue());
             }
@@ -1395,6 +1422,8 @@ public class Main {
                 defSchemaName = value;
             } else if (OPTIONS.DATA_OUTPUT_DIRECTORY.equalsIgnoreCase(attributeName)) {
                 dataOutputDirectory = value;
+            } else if (OPTIONS.CURRENT_DATE_TIME_FUNCTION.equalsIgnoreCase(attributeName)) {
+                this.currentDateTimeFunction = value;
             }
         }
 
@@ -1405,7 +1434,7 @@ public class Main {
 
         return CommandLineUtils.createDatabaseObject(resourceAccessor, refUrl, refUsername, refPassword, refDriver,
                 defCatalogName, defSchemaName, Boolean.parseBoolean(outputDefaultCatalog), Boolean.parseBoolean
-                        (outputDefaultSchema), null, null, this.propertyProviderClass, this.liquibaseCatalogName,
+                        (outputDefaultSchema), this.currentDateTimeFunction, null, null, this.propertyProviderClass, this.liquibaseCatalogName,
                 this.liquibaseSchemaName, this.databaseChangeLogTableName, this.databaseChangeLogLockTableName);
     }
 
@@ -1503,6 +1532,7 @@ public class Main {
         private static final String INCLUDE_OBJECTS = "includeObjects";
         private static final String INCLUDE_SCHEMA = "includeSchema";
         private static final String INCLUDE_TABLESPACE = "includeTablespace";
+        private static final String CURRENT_DATE_TIME_FUNCTION = "currentDateTimeFunction";
         private static final String OUTPUT_SCHEMAS_AS = "outputSchemasAs";
         private static final String REFERENCE_DEFAULT_CATALOG_NAME = "referenceDefaultCatalogName";
         private static final String REFERENCE_DEFAULT_SCHEMA_NAME = "referenceDefaultSchemaName";

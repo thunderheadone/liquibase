@@ -19,6 +19,8 @@ import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
+import liquibase.statement.core.CurrentDateTimeFunction;
+import liquibase.statement.core.NamedDateTimeFormatter;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Schema;
@@ -56,6 +58,7 @@ public class CommandLineUtils {
                                                 String defaultSchemaName,
                                                 boolean outputDefaultCatalog,
                                                 boolean outputDefaultSchema,
+                                                String currentDateTimeFunction,
                                                 String databaseClass,
                                                 String driverPropertiesFile,
                                                 String propertyProviderClass,
@@ -65,7 +68,7 @@ public class CommandLineUtils {
                                                 String databaseChangeLogLockTableName) throws DatabaseException {
 
         return createDatabaseObject(new ClassLoaderResourceAccessor(classLoader), url, username, password, driver,
-                defaultCatalogName, defaultSchemaName, outputDefaultCatalog, outputDefaultSchema, databaseClass,
+                defaultCatalogName, defaultSchemaName, outputDefaultCatalog, outputDefaultSchema, currentDateTimeFunction, databaseClass,
                 driverPropertiesFile, propertyProviderClass, liquibaseCatalogName, liquibaseSchemaName,
                 databaseChangeLogTableName, databaseChangeLogLockTableName);
     }
@@ -79,6 +82,7 @@ public class CommandLineUtils {
                                                 String defaultSchemaName,
                                                 boolean outputDefaultCatalog,
                                                 boolean outputDefaultSchema,
+                                                String currentDateTimeFunction,
                                                 String databaseClass,
                                                 String driverPropertiesFile,
                                                 String propertyProviderClass,
@@ -115,6 +119,8 @@ public class CommandLineUtils {
             database.setOutputDefaultSchema(outputDefaultSchema);
             database.setLiquibaseCatalogName(liquibaseCatalogName);
             database.setLiquibaseSchemaName(liquibaseSchemaName);
+            database.setCurrentDateTimeFunction(NamedDateTimeFormatter.byNameOrPattern(currentDateTimeFunction));
+
             if (databaseChangeLogTableName != null) {
                 database.setDatabaseChangeLogTableName(databaseChangeLogTableName);
                 if (databaseChangeLogLockTableName != null) {
