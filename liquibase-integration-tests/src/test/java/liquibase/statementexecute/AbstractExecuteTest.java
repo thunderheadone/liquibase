@@ -142,7 +142,7 @@ public abstract class AbstractExecuteTest {
 
         convertedSql = convertedSql.replaceAll("FALSE", DataTypeFactory.getInstance().fromDescription("boolean", database).objectToSql(false, database));
         convertedSql = convertedSql.replaceAll("TRUE", DataTypeFactory.getInstance().fromDescription("boolean", database).objectToSql(true, database));
-        convertedSql = convertedSql.replaceAll("NOW\\(\\)", database.getCurrentDateTimeFunction());
+        convertedSql = convertedSql.replaceAll("NOW\\(\\)", database.getCurrentDateTimePlaceholder());
 
         return convertedSql;
     }

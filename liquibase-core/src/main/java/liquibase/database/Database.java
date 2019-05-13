@@ -10,6 +10,7 @@ import liquibase.servicelocator.PrioritizedService;
 import liquibase.sql.visitor.SqlVisitor;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.CurrentDateTimeFunction;
 import liquibase.structure.DatabaseObject;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * Interface that every DBMS supported by this software must implement. Most methods belong into ont of these
@@ -124,9 +126,13 @@ public interface Database extends PrioritizedService {
     /**
      * Returns database-specific function for generating the current date/time.
      */
-    String getCurrentDateTimeFunction();
+    String getCurrentDateTimePlaceholder();
 
-    void setCurrentDateTimeFunction(String function);
+    void setCurrentDateTimePlaceholder(String placeholder);
+
+    CurrentDateTimeFunction getCurrentDateTimeFunction();
+
+    void setCurrentDateTimeFunction(CurrentDateTimeFunction dateTimeFunction);
 
     String getLineComment();
 

@@ -322,6 +322,7 @@ public abstract class AbstractLiquibaseMojo extends AbstractMojo {
                     defaultSchemaName,
                     outputDefaultCatalog,
                     outputDefaultSchema,
+                    null,
                     databaseClass,
                     driverPropsFile,
                     propertyProviderClass,

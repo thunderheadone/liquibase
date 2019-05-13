@@ -27,7 +27,7 @@ public class DerbyDatabase extends AbstractJdbcDatabase {
     private Logger log = LogService.getLog(getClass());
 
     public DerbyDatabase() {
-        super.setCurrentDateTimeFunction("CURRENT_TIMESTAMP");
+        super.setCurrentDateTimePlaceholder("CURRENT_TIMESTAMP");
         super.sequenceNextValueFunction = "NEXT VALUE FOR %s";
         super.sequenceCurrentValueFunction = "(SELECT currentvalue FROM sys.syssequences WHERE sequencename = upper('%s'))";
         determineDriverVersion();

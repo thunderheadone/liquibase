@@ -18,7 +18,6 @@ import liquibase.statement.SqlStatement;
 import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.MarkChangeSetRanStatement;
 import liquibase.statement.core.UpdateStatement;
-import liquibase.structure.core.Column;
 import liquibase.util.LiquibaseUtil;
 import liquibase.util.StringUtils;
 
@@ -40,7 +39,7 @@ public class MarkChangeSetRanGenerator extends AbstractSqlGenerator<MarkChangeSe
 
     @Override
     public Sql[] generateSql(MarkChangeSetRanStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String dateValue = database.getCurrentDateTimeFunction();
+        String dateValue = database.getCurrentDateTimePlaceholder();
 
         ChangeSet changeSet = statement.getChangeSet();
 

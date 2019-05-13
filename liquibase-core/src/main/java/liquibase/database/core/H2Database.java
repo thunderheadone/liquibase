@@ -80,7 +80,7 @@ public class H2Database extends AbstractJdbcDatabase {
 
     public H2Database() {
         super.unquotedObjectsAreUppercased=true;
-        super.setCurrentDateTimeFunction("NOW()");
+        super.setCurrentDateTimePlaceholder("NOW()");
         // for current date
         this.dateFunctions.add(new DatabaseFunction("CURRENT_DATE"));
         this.dateFunctions.add(new DatabaseFunction("CURDATE"));
