@@ -171,7 +171,7 @@ public abstract class AbstractJdbcDatabase implements Database {
                 previousAutoCommit = autoCommit;
 
                 Scope.getCurrentScope().getLog(getClass()).fine(LogType.LOG, "Setting auto commit to " + getAutoCommitMode() + " from " + autoCommit);
-                connection.setAutoCommit(getAutoCommitMode());
+                connection.setAutoCommit(getAutoCommitMode() || !supportingTransactions);
 
             }
         } catch (DatabaseException e) {
@@ -200,7 +200,7 @@ public abstract class AbstractJdbcDatabase implements Database {
     // implementation specify it explicitly.
     @Override
     public boolean supportsDDLInTransaction() {
-        return true;
+        return false;
     }
 
     @Override
@@ -1143,19 +1143,23 @@ public abstract class AbstractJdbcDatabase implements Database {
 
     @Override
     public void commit() throws DatabaseException {
-        try {
-            getConnection().commit();
-        } catch (DatabaseException e) {
-            throw new DatabaseException(e);
+        if (supportingTransactions == true) {
+            try {
+                getConnection().commit();
+            } catch (DatabaseException e) {
+                throw new DatabaseException(e);
+            }
         }
     }
 
     @Override
     public void rollback() throws DatabaseException {
-        try {
-            getConnection().rollback();
-        } catch (DatabaseException e) {
-            throw new DatabaseException(e);
+        if (supportingTransactions == true) {
+            try {
+                getConnection().rollback();
+            } catch (DatabaseException e) {
+                throw new DatabaseException(e);
+            }
         }
     }
 

@@ -333,7 +333,7 @@ public class JdbcConnection implements DatabaseConnection {
     @Override
     public void rollback() throws DatabaseException {
         try {
-            if (!con.getAutoCommit() && !con.isClosed()) {
+            if (false && !con.getAutoCommit() && !con.isClosed()) {
                 con.rollback();
             }
         } catch (SQLException e) {
@@ -343,7 +343,7 @@ public class JdbcConnection implements DatabaseConnection {
 
     public void rollback(Savepoint savepoint) throws DatabaseException {
         try {
-            if (!con.getAutoCommit()) {
+            if (false && !con.getAutoCommit()) {
                 con.rollback(savepoint);
             }
         } catch (SQLException e) {
